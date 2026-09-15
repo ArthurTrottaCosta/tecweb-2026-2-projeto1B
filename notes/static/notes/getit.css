@@ -1,0 +1,408 @@
+/*
+Algumas informações úteis e dicas:
+  - Fontes disponíveis:
+    font-family: 'Roboto', sans-serif;
+    font-family: 'Permanent Marker', cursive;
+  - Cores:
+    Tons de amarelo:
+      #e4fc2b
+      #e0d426
+      #f7d736
+      #e0af26
+      #fcb02b
+    Tons de cinza:
+      #2c2c2c
+      #4c4c4c
+    Cores dos cards:
+      #ead3a7
+      #9de0f5
+      #ef89ba
+      #fae890
+      #abe9c1
+  - Sombra: https://codepen.io/sdthornton/pen/wBZdXq
+ */
+
+body { margin: 0; background: #fafafa; color: #2c2c2c; }
+
+html,
+body {
+  font-family: "Roboto", sans-serif;
+}
+*{
+  box-sizing: border-box;
+}
+.appbar{
+  background-color: #f7d736;
+  height: 78px;
+  display: flex;
+  align-items: center;
+  box-shadow:0 15px 20px rgba(0, 0, 0, 0.2);
+}
+.logo{
+  height: 64px;
+}
+.subtitle{
+  margin-left: 20px;
+  font-size: 18px;
+  color: #2c2c2c;
+}
+.form-card{
+  width: min(570px, calc(100% - 32px));
+  margin: 40px auto 0 auto;
+  background-color: white;
+  border-radius: 4px;
+  padding: 12px 12px 12px 12px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+.form-card-title{
+  font-size: 20px;
+  font-family: inherit;
+  padding: 2px;
+  margin-bottom: 20px;
+  display: block;
+  width: 100%;
+  border: 0;
+  outline: 0;
+}
+.autoresize{
+  font-family: inherit;
+  font-size: 15px;
+  height: 36px;
+  padding: 2px ;
+  margin-bottom: 10px;
+  display: block;
+  width: 100%;
+  border: 0;
+  outline: 0;
+  resize: none;
+}
+/* Efeito de "ripple" no botão */
+/* Fonte: https://codepen.io/CrisWoler/pen/ogXBLj */
+.btn {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 38px;
+  padding: 10px 15px;
+
+  overflow: hidden;
+
+  border-width: 0;
+  outline: none;
+  border-radius: 3px;
+
+  background-color: #f7d736;
+  color: #2c2c2c;
+  font-family: inherit;
+  font-size: 15px;
+  cursor: pointer;
+
+  transition: background-color 0.3s;
+}
+
+.btn:hover {
+  background-color: #e0af26;
+}
+
+.btn > * {
+  position: relative;
+}
+
+.btn:before {
+  content: "";
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  display: block;
+  width: 0;
+  padding-top: 0;
+
+  border-radius: 100%;
+
+  background-color: rgba(236, 240, 241, 0.3);
+
+  transform: translate(-50%, -50%);
+}
+
+.btn:active:before {
+  width: 120%;
+  padding-top: 120%;
+
+  transition: width 0.2s ease-out, padding-top 0.2s ease-out;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  margin-top: 30px;
+}
+
+.card{
+  width: 240px;
+  margin: 20px;
+  padding: 16px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  font-family: "Permanent Marker", cursive;
+  min-height: 150px;
+  border-radius: 4px;
+  background-color: #9de0f5;
+}
+
+.card-title {
+  margin-top: 0;
+  overflow-wrap: anywhere;
+  font-size: 24px;
+  margin-bottom: 15px;
+}
+
+.card-content {
+  overflow-wrap: anywhere;
+  font-size: 18px;
+  line-height: 1.3;
+}
+
+.card-rotation-1{
+  transform: rotate(-5deg);
+}
+.card-rotation-2{
+  transform: rotate(-4deg);
+}
+.card-rotation-3{
+  transform: rotate(-3deg);
+}
+.card-rotation-4{
+  transform: rotate(-2deg);
+}
+.card-rotation-5{
+  transform: rotate(-1deg);
+}
+.card-rotation-6{
+  transform: rotate(0deg);
+}
+.card-rotation-7{
+  transform: rotate(1deg);
+}
+.card-rotation-8{
+  transform: rotate(2deg);
+}
+.card-rotation-9{
+  transform: rotate(3deg);
+}
+.card-rotation-10{
+  transform: rotate(4deg);
+}
+.card-rotation-11{
+  transform: rotate(5deg);
+}
+
+
+.card-color-1 {
+  background-color: #ead3a7;
+}
+
+.card-color-2 {
+  background-color: #9de0f5;
+}
+
+.card-color-3 {
+  background-color: #ef89ba;
+}
+
+.card-color-4 {
+  background-color: #fae890;
+}
+
+.card-color-5 {
+  background-color: #abe9c1;
+}
+
+.form-error {
+  margin: 8px 0 12px;
+  color: #b42318;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.form-error:empty {
+  display: none;
+}
+
+.card-actions {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-family: "Roboto", sans-serif;
+}
+
+.card-actions form {
+  margin: 0;
+}
+
+.card-action {
+  border: 0;
+  padding: 3px;
+  background: transparent;
+  color: #2c2c2c;
+  font: inherit;
+  font-size: 13px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.card-action:hover {
+  text-decoration: underline;
+}
+
+.favorite-action {
+  color: #9a6a00;
+  font-size: 25px;
+  line-height: 1;
+}
+
+.danger-action,
+.danger-btn {
+  color: #8f1d14;
+}
+
+.page-container {
+  padding: 40px 16px;
+}
+
+.dialog-card {
+  width: min(620px, 100%);
+  padding: 28px;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.page-title {
+  margin-bottom: 18px;
+  color: #2c2c2c;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.confirmation-card {
+  max-width: 100%;
+  margin: 28px auto;
+  text-align: left;
+}
+
+.dialog-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.dialog-actions form {
+  margin: 0;
+}
+
+.dialog-actions .btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.danger-btn {
+  background-color: #ef9a8f;
+}
+
+.danger-btn:hover {
+  background-color: #e47769;
+}
+
+.secondary-btn {
+  background-color: #e8e8e8;
+}
+
+.secondary-btn:hover {
+  background-color: #d4d4d4;
+}
+
+.edit-form {
+  padding: 24px;
+}
+
+.field-label {
+  display: block;
+  margin: 12px 2px 6px;
+  color: #4c4c4c;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.field-border {
+  padding: 10px;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+}
+
+.form-heading { font-size: 20px; margin: 0 0 16px; }
+.notes-section { width: 100%; max-width: 1280px; padding: 24px 16px 40px; }
+.section-heading { font-size: 20px; text-align: center; margin: 12px 0; }
+.notes-section .card-container { margin-top: 4px; }
+.empty-state { color: #4c4c4c; text-align: center; line-height: 1.6; }
+.form-error ul { list-style: none; padding: 0; margin: 0; }
+.autoresize.field-border { min-height: 100px; }
+.form-card-title.field-border { margin-bottom: 12px; }
+.appbar { padding: 0 16px; }
+.appbar a { display: flex; flex-shrink: 0; }
+.btn { min-height: 44px; height: auto; }
+.card-action { display: inline-block; padding: 10px 6px; }
+a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible {
+  outline: 3px solid #795500;
+  outline-offset: 3px;
+}
+
+.error-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.error-image {
+  width: min(360px, 100%);
+}
+
+.error-code {
+  color: #9a6a00;
+  font-family: "Permanent Marker", cursive;
+  font-size: 24px;
+}
+
+.error-home-btn {
+  width: min(340px, 100%);
+  margin-top: 8px;
+  text-decoration: none;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .subtitle {
+    font-size: 14px;
+  }
+
+  .dialog-actions {
+    grid-template-columns: 1fr;
+  }
+}

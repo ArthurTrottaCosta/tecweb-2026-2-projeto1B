@@ -1,0 +1,15 @@
+{% extends 'notes/base.html' %}
+{% block title %}Editar anotação | Get-it{% endblock %}
+{% block content %}
+<div class="container page-container">
+  <form class="form-card edit-form" method="post" action="{% url 'edit_note' note.id %}">
+    {% csrf_token %}
+    <h1 class="page-title">Editar anotação</h1>
+    {% include 'notes/fields.html' %}
+    <div class="dialog-actions">
+      <a class="btn secondary-btn" href="{% url 'index' %}">Cancelar</a>
+      <button class="btn" type="submit">Salvar alterações</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

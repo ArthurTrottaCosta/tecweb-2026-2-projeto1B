@@ -1,0 +1,21 @@
+{% extends 'notes/base.html' %}
+{% block title %}Excluir anotação | Get-it{% endblock %}
+{% block content %}
+<div class="container page-container">
+  <section class="dialog-card">
+    <h1 class="page-title">Excluir anotação?</h1>
+    <p>Esta anotação será apagada permanentemente.</p>
+    <article class="card confirmation-card">
+      <h2 class="card-title">{{ note.title }}</h2>
+      <div class="card-content">{{ note.content|linebreaksbr }}</div>
+    </article>
+    <form method="post" action="{% url 'delete_note' note.id %}">
+      {% csrf_token %}
+      <div class="dialog-actions">
+        <a class="btn secondary-btn" href="{% url 'index' %}">Cancelar</a>
+        <button class="btn danger-btn" type="submit">Confirmar exclusão</button>
+      </div>
+    </form>
+  </section>
+</div>
+{% endblock %}
