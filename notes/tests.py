@@ -1,7 +1,7 @@
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from .models import Note
+from .models import Note, Tag
 
 
 class NoteFlowTests(TestCase):
@@ -96,3 +96,121 @@ class NoteFlowTests(TestCase):
             self.assertContains(client.get(url), 'csrfmiddlewaretoken')
             self.assertEqual(client.post(url, {'titulo': 'X', 'detalhes': 'Y'}).status_code, 403)
         self.assertEqual(Note.objects.count(), 1)
+
+
+class TagFlowTests(TestCase):
+    def create_note(self, title, tags=''):
+        response = self.client.post('/', {
+            'titulo': title, 'detalhes': 'Conteúdo de ' + title, 'tags': tags,
+        })
+        self.assertRedirects(response, '/')
+        return Note.objects.get(title=title)
+
+    def test_create_with_zero_one_and_multiple_tags(self):
+        for title, raw, expected in (
+            ('Sem tags', '', []),
+            ('Uma tag', 'estudos', ['estudos']),
+            ('Várias tags', 'estudos, faculdade', ['estudos', 'faculdade']),
+            ('Apenas separadores', ' , , ', []),
+        ):
+            with self.subTest(title=title):
+                note = self.create_note(title, raw)
+                self.assertEqual(list(note.tags.values_list('name', flat=True)), expected)
+
+    def test_reuses_tags_across_notes_and_normalizes_input(self):
+        first = self.create_note('Primeira', ' Estudos, estudos, ESTUDOS, AÇÃO, ação, ,')
+        second = self.create_note('Segunda', 'estudos, ação')
+        self.assertEqual(Tag.objects.count(), 2)
+        self.assertEqual(first.tags.count(), 2)
+        self.assertEqual(second.tags.count(), 2)
+        self.assertEqual(Tag.objects.get(name='estudos').notes.count(), 2)
+
+    def test_edit_prefills_adds_removes_and_clears_tags(self):
+        note = self.create_note('Editar tags', 'estudos, faculdade')
+        shared = self.create_note('Compartilhada', 'faculdade')
+        url = reverse('edit_note', args=[note.pk])
+        response = self.client.get(url)
+        self.assertEqual(response.context['form']['tags'].value(), 'estudos, faculdade')
+        self.assertRedirects(self.client.post(url, {
+            'titulo': note.title, 'detalhes': note.content, 'tags': 'estudos, python',
+        }), '/')
+        self.assertEqual(list(note.tags.values_list('name', flat=True)), ['estudos', 'python'])
+        self.assertTrue(shared.tags.filter(name='faculdade').exists())
+        self.assertRedirects(self.client.post(url, {
+            'titulo': note.title, 'detalhes': note.content, 'tags': '',
+        }), '/')
+        self.assertEqual(note.tags.count(), 0)
+        self.assertTrue(shared.tags.filter(name='faculdade').exists())
+
+    def test_invalid_tags_do_not_create_partial_records(self):
+        response = self.client.post('/', {
+            'titulo': 'Inválida', 'detalhes': 'Conteúdo', 'tags': 'válida,' + 'x' * 201,
+        })
+        self.assertContains(response, 'Cada tag deve ter no máximo 200 caracteres.')
+        self.assertEqual(Note.objects.count(), 0)
+        self.assertEqual(Tag.objects.count(), 0)
+
+    def test_invalid_edit_preserves_note_tags_and_submitted_input(self):
+        note = self.create_note('Original', 'antiga')
+        url = reverse('edit_note', args=[note.pk])
+        for data in (
+            {'titulo': 'Tentativa', 'detalhes': ' ', 'tags': 'nova'},
+            {'titulo': 'Tentativa', 'detalhes': 'Novo', 'tags': 'nova,' + 'x' * 201},
+        ):
+            with self.subTest(data=data):
+                response = self.client.post(url, data)
+                self.assertTrue(response.context['form'].errors)
+                self.assertEqual(response.context['form']['tags'].value(), data['tags'])
+                note.refresh_from_db()
+                self.assertEqual(note.title, 'Original')
+                self.assertEqual(note.content, 'Conteúdo de Original')
+                self.assertEqual(list(note.tags.values_list('name', flat=True)), ['antiga'])
+                self.assertEqual(Tag.objects.count(), 1)
+
+    def test_cancel_does_not_change_tags(self):
+        note = self.create_note('Cancelar', 'original')
+        self.client.get(reverse('edit_note', args=[note.pk]))
+        self.client.get('/')
+        self.assertEqual(list(note.tags.values_list('name', flat=True)), ['original'])
+
+    def test_tag_list_and_details_filter_notes_and_link_navigation(self):
+        first = self.create_note('Receita especial', 'comida, casa')
+        second = self.create_note('Lista de compras', 'comida')
+        self.create_note('Outra matéria', 'estudos')
+        food = Tag.objects.get(name='comida')
+        url = reverse('tag_detail', args=[food.pk])
+        listing = self.client.get(reverse('tag_list'))
+        self.assertQuerySetEqual(listing.context['tags'], ['casa', 'comida', 'estudos'], transform=lambda tag: tag.name)
+        self.assertContains(listing, f'href="{url}"')
+        self.assertContains(self.client.get('/'), 'href="/tags/"')
+        detail = self.client.get(url)
+        self.assertQuerySetEqual(detail.context['notes'], [second, first])
+        self.assertContains(detail, 'Receita especial')
+        self.assertNotContains(detail, 'Outra matéria')
+        self.assertContains(detail, reverse('edit_note', args=[first.pk]))
+        self.assertContains(detail, reverse('delete_note', args=[first.pk]))
+
+    def test_empty_tags_and_missing_tag(self):
+        self.assertContains(self.client.get('/tags/'), 'Nenhuma tag por enquanto.')
+        tag = Tag.objects.create(name='vazia')
+        self.assertContains(self.client.get(reverse('tag_detail', args=[tag.pk])), 'Nenhuma anotação com esta tag.')
+        self.assertEqual(self.client.get('/tags/9999/').status_code, 404)
+
+    def test_deleting_note_preserves_shared_tag_and_other_notes(self):
+        first = self.create_note('Apagar', 'compartilhada, exclusiva')
+        other = self.create_note('Manter', 'compartilhada')
+        self.assertRedirects(self.client.post(reverse('delete_note', args=[first.pk])), '/')
+        self.assertEqual(Tag.objects.count(), 2)
+        tag = Tag.objects.get(name='compartilhada')
+        self.assertQuerySetEqual(tag.notes.all(), [other])
+        self.assertEqual(Tag.objects.get(name='exclusiva').notes.count(), 0)
+
+    def test_tag_names_are_escaped_and_pages_reject_mutations(self):
+        note = self.create_note('HTML', '<script>alert(1)</script>')
+        tag = note.tags.get()
+        for url in ('/', '/tags/', reverse('tag_detail', args=[tag.pk])):
+            response = self.client.get(url)
+            self.assertContains(response, '&lt;script&gt;alert(1)&lt;/script&gt;')
+            self.assertNotContains(response, '<script>alert(1)</script>')
+        for url in ('/tags/', reverse('tag_detail', args=[tag.pk])):
+            self.assertEqual(self.client.post(url).status_code, 405)

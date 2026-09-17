@@ -1,0 +1,18 @@
+{% extends 'notes/base.html' %}
+{% block title %}Tags | Get-it{% endblock %}
+{% block content %}
+<div class="container page-container">
+  <section class="dialog-card">
+    <h1 class="page-title">Tags</h1>
+    <p>Escolha uma tag para ver suas anotações.</p>
+    <ul class="tag-list">
+      {% for tag in tags %}
+        <li><a class="tag-link" href="{% url 'tag_detail' tag.id %}">{{ tag.name }}</a></li>
+      {% empty %}
+        <li class="empty-state">Nenhuma tag por enquanto. Adicione tags ao criar ou editar uma anotação.</li>
+      {% endfor %}
+    </ul>
+    <a class="back-link" href="{% url 'index' %}">Voltar às anotações</a>
+  </section>
+</div>
+{% endblock %}

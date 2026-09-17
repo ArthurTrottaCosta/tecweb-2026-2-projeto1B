@@ -1,0 +1,17 @@
+<article class="card">
+  <h3 class="card-title">{{ note.title }}</h3>
+  <div class="card-content">{{ note.content|linebreaksbr }}</div>
+  {% with tags=note.tags.all %}
+    {% if tags %}
+      <ul class="note-tags" aria-label="Tags da anotação">
+        {% for tag in tags %}
+          <li><a class="tag-link" href="{% url 'tag_detail' tag.id %}">{{ tag.name }}</a></li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+  <div class="card-actions">
+    <a class="card-action" href="{% url 'edit_note' note.id %}" aria-label="Editar {{ note.title }}">Editar</a>
+    <a class="card-action danger-action" href="{% url 'delete_note' note.id %}" aria-label="Excluir {{ note.title }}">Excluir</a>
+  </div>
+</article>

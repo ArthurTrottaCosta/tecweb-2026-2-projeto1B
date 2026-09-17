@@ -11,14 +11,7 @@
     <h2 id="notes-heading" class="section-heading">Suas anotações</h2>
     <div class="card-container">
       {% for note in notes %}
-        <article class="card">
-          <h3 class="card-title">{{ note.title }}</h3>
-          <div class="card-content">{{ note.content|linebreaksbr }}</div>
-          <div class="card-actions">
-            <a class="card-action" href="{% url 'edit_note' note.id %}" aria-label="Editar {{ note.title }}">Editar</a>
-            <a class="card-action danger-action" href="{% url 'delete_note' note.id %}" aria-label="Excluir {{ note.title }}">Excluir</a>
-          </div>
-        </article>
+        {% include 'notes/card.html' %}
       {% empty %}
         <p class="empty-state">Nenhuma anotação por enquanto. Crie a primeira no formulário acima.</p>
       {% endfor %}

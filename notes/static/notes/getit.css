@@ -368,6 +368,21 @@ body {
 .appbar a { display: flex; flex-shrink: 0; }
 .btn { min-height: 44px; height: auto; }
 .card-action { display: inline-block; padding: 10px 6px; }
+.app-nav { display: flex; gap: 8px; margin-left: auto; padding-left: 16px; }
+.app-nav a, .back-link { color: #2c2c2c; font-weight: 500; }
+.app-nav a { padding: 12px 8px; text-decoration: none; border-radius: 4px; }
+.app-nav a:hover { background: #e0d426; }
+.tag-input { display: block; width: 100%; font: inherit; }
+.field-help { font-size: 13px; line-height: 1.5; color: #4c4c4c; margin: 6px 0 16px; }
+.note-tags, .tag-list { display: flex; flex-wrap: wrap; gap: 8px; padding: 0; list-style: none; }
+.note-tags { font-family: 'Roboto', sans-serif; margin: 16px 0 0; }
+.note-tags li, .tag-list li { max-width: 100%; }
+.tag-link { display: inline-block; max-width: 100%; padding: 8px 10px; border-radius: 12px; background: #ffffffa6; color: #2c2c2c; font-size: 14px; text-decoration: none; overflow-wrap: anywhere; }
+.tag-link:hover { background: #fff; text-decoration: underline; }
+.tag-list { justify-content: center; margin: 24px 0; }
+.tag-list .tag-link { background: #fae890; padding: 12px 16px; }
+.tag-heading { text-align: center; }
+.tag-heading .page-title { margin-top: 24px; overflow-wrap: anywhere; }
 a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible {
   outline: 3px solid #795500;
   outline-offset: 3px;
@@ -398,6 +413,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 }
 
 @media (max-width: 600px) {
+  .appbar { height: auto; min-height: 78px; flex-wrap: wrap; padding-top: 8px; padding-bottom: 8px; }
+  .subtitle { flex: 1; }
+  .app-nav { width: 100%; justify-content: center; margin: 4px 0 0; padding: 0; }
   .subtitle {
     font-size: 14px;
   }
