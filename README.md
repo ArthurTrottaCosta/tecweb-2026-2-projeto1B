@@ -22,6 +22,13 @@ Projeto individual de Tecnologias Web, Insper 2026/2. Aplicação de anotações
 
 Ao atualizar a partir da etapa 1, execute `python manage.py migrate`. A migração adiciona as tabelas de tags e associações e preserva as notas existentes.
 
+## Etapa 3: PostgreSQL e publicação
+
+- O banco local roda em um container PostgreSQL isolado pelo projeto Compose `tecweb-projeto1b`.
+- A porta local é `5435`, evitando conflito com outros projetos Docker deste computador.
+- O volume `tecweb1b-postgres-data` preserva os dados quando o container é parado.
+- A publicação usa Render, Gunicorn, WhiteNoise e um banco PostgreSQL próprio.
+
 ## Executar localmente (PowerShell)
 
 Dentro da pasta deste repositório:
@@ -30,11 +37,14 @@ Dentro da pasta deste repositório:
 py -3.12 -m venv env
 .\env\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
+docker compose up -d
 python manage.py migrate
 python manage.py runserver
 ```
 
-Acesse http://localhost:8000/. Em execuções posteriores, basta ativar o ambiente e iniciar o servidor. O banco `db.sqlite3` guarda os dados locais e não é versionado.
+Acesse http://localhost:8000/. Em execuções posteriores, ative o ambiente, execute `docker compose up -d` e inicie o servidor. Para parar somente o banco deste projeto, execute `docker compose stop`; não é necessário reiniciar o Docker Desktop.
+
+As credenciais em `compose.yaml` são exclusivas do ambiente acadêmico local. Em produção, o Render fornece `DATABASE_URL` e gera `SECRET_KEY` sem armazená-las no repositório.
 
 ## Verificar
 
@@ -47,10 +57,10 @@ Os testes usam um banco separado, sem alterar suas anotações locais. No navega
 
 Opcionalmente, execute `python manage.py createsuperuser` para usar o Django Admin em `/admin/`.
 
-## Próxima etapa
+## Aplicação publicada
 
-3. PostgreSQL em Docker, publicação e inclusão do endereço público neste README.
+https://arthur-trotta-tecweb-2026-2-projeto1b.onrender.com/
 
-Esta etapa funciona localmente; a aplicação ainda não foi publicada.
+O plano gratuito do Render pode suspender o serviço após 15 minutos sem acesso e o primeiro carregamento pode levar cerca de um minuto. O banco PostgreSQL gratuito expira 30 dias após a criação.
 
 Enunciado: https://barbaratieko.github.io/tecweb/projetos/projeto1/projeto1b/

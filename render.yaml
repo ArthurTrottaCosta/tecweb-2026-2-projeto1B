@@ -1,0 +1,31 @@
+databases:
+  - name: tecweb-projeto1b-db
+    databaseName: getit
+    user: getituser
+    plan: free
+
+services:
+  - type: web
+    name: arthur-trotta-tecweb-2026-2-projeto1b
+    runtime: python
+    plan: free
+    buildCommand: bash build.sh
+    startCommand: gunicorn getit.wsgi:application
+    healthCheckPath: /
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: tecweb-projeto1b-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: .onrender.com
+      - key: CSRF_TRUSTED_ORIGINS
+        value: https://*.onrender.com
+      - key: PYTHON_VERSION
+        value: 3.12.11
+      - key: WEB_CONCURRENCY
+        value: "2"
